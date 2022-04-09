@@ -1,6 +1,8 @@
 """
-    main window application to play with tkinter!
+    main window application to play with tkinter submodule ttk!
 """
+from atexit import unregister
+import imp
 from re import sub
 import tkinter as tk
 # from unicodedata import category
@@ -10,6 +12,7 @@ from tkinter import messagebox as tkmb
 # from urllib import response
 from tkinter import simpledialog as tksd
 from tkinter import filedialog as tkfd
+from tkinter import ttk # adding ttk --> replace your 'tk's w/ 'ttk's - where applicable !
 
 # methods
 
@@ -81,67 +84,82 @@ def set_font_size(*args):  # with 'dummy' args - for use in a trace
 
 #define and configure main window
 root = tk.Tk()
-root.title('Play with Me!')
-root.geometry('800x600')
+root.title('Play with Me --- TTK !')
+root.geometry('860x660')
 root.columnconfigure(0, weight=1)
-root.rowconfigure(2, weight=1)
+root.rowconfigure(0, weight=1)
+root.configure(bg='#888')
+
+# ttk offers 'notebook' widget - gives you tabs
+#  previously added sub-frames for our widgets to make 
+#   adding our notebook easier.
+nb = ttk.Notebook(root)
+nb.grid(sticky=tk.N+tk.E+tk.W+tk.S, padx=5, pady=5)
+nb.enable_traversal() # can use arrow keys to switch tabs
+
+# sub-frame for form
+form_frm = ttk.Frame(nb)  # adding this frame to our new notebook
+form_frm.grid(sticky=tk.N+tk.E+tk.W+tk.S, padx=5, pady=5)
+form_frm.columnconfigure(0, weight=1)
+form_frm.rowconfigure(5, weight=1)
+nb.add(form_frm, text='Notebook Entry', underline=0) # underline first letter of tab text (ALT+char to switch)
+
+dummy_frm = ttk.Frame(nb)
+nb.add(dummy_frm, text='Dummy Entry', underline=1) # underline second letter of tab text (ALT+char to switch)
 
 # subject
-subj_frame = tk.Frame(root) # frame for 'nesting layouts' - geometry will 'reset'
+subj_frame = ttk.Frame(form_frm) # frame for 'nesting layouts' - geometry will 'reset'
 subj_frame.columnconfigure(1, weight=1) # note: '1' for object in column 1 (column 0 object is the label)
 subject_var = tk.StringVar() # control variable for two-way binding!
-tk.Label(subj_frame, text='Subject: ').grid(sticky=tk.E+tk.W)  
-tk.Entry(subj_frame, textvariable=subject_var).grid(row=0, column=1, sticky=tk.E+tk.W, padx=5, pady=5)
+ttk.Label(subj_frame, text='Subject: ').grid(sticky=tk.W+tk.E)  
+ttk.Entry(subj_frame, textvariable=subject_var).grid(row=0, column=1, sticky=tk.E+tk.W)
 subj_frame.grid(sticky='ew') # each frame can have seperate layout types (grid/pack)
 
 # categories
-cat_frame = tk.Frame(root)
+cat_frame = ttk.Frame(form_frm)
 cat_frame.columnconfigure(1, weight=1)
 cats_var = tk.StringVar() 
 cats = ['Work', 'Hobbies', 'Bills', 'Dogs']
-cats_lbl = tk.Label(cat_frame, text='Category: ')
-cats_inp = tk.OptionMenu(cat_frame, cats_var, *cats) 
-cats_lbl.grid(sticky=tk.E+tk.W, padx=5, pady=5) 
-cats_inp.grid(row=0, column=1, sticky=tk.E+tk.W, padx=5, pady=5)
+ttk.Label(cat_frame, text='Category: ').grid(sticky=tk.E+tk.W, padx=5, pady=5) 
+# ttk.OptionMenu(cat_frame, cats_var, cats[0], *cats).grid(row=0, column=1, sticky=tk.E+tk.W, padx=5) # note: ttk needed 3rd arg.
+ttk.Combobox(cat_frame, textvariable=cats_var, values=cats).grid(row=0, column=1, sticky=tk.E+tk.W, padx=5) # ttk upgrade OptionMenu to ComboBox
 cat_frame.grid(sticky='ew') # no col,row args needed b/c we want 'next availlable' display location
+ttk.Separator(form_frm, orient=tk.HORIZONTAL).grid(sticky='ew') # ttk supports separators
 
-# private
+# private indication menu item and checkbox
 private_var = tk.BooleanVar(value=False)
-#  tk.Checkbutton(root, variable=private_var, text='Private?').grid(ipadx=5, ipady=5, sticky='w')
-#  add variable trace for 'private' checkbox changes
-private_var.trace_add('write', private_warn)
+ttk.Checkbutton(form_frm, variable=private_var, text='Private?').grid(ipadx=5, ipady=2, sticky='w')
 
-# text box (note: no control var option available for this object)
-msg_frame = tk.LabelFrame(root, text='Message')
+# Datestamp selection radio button
+datestamp_var = tk.StringVar(value='none')
+datestamp_frm = tk.Frame(form_frm)
+for value in ('None', 'Date', 'Date+Time'):
+    ttk.Radiobutton(
+        datestamp_frm,
+        text=value,
+        value=value,
+        variable=datestamp_var
+    ).pack(side=tk.LEFT)
+datestamp_frm.grid(row=2, sticky='e')
+
+# text box message (note: no control var option available for this object)
+msg_frame = ttk.LabelFrame(form_frm, text='Message')
 msg_frame.columnconfigure(0, weight=1)
-msg_inp = tk.Text(msg_frame)
+msg_frame.rowconfigure(0, weight=1)
+msg_inp = tk.Text(msg_frame) # note: there is not a ttk text widget
 msg_inp.grid(sticky=tk.N+tk.E+tk.S+tk.W)
 msg_frame.grid(sticky='nesw')
 
 # add scroll bar onto above text box
 #  note: cannot add scroll bar to Frame, but can add it to text box in the frame
-scroll_bar = tk.Scrollbar(msg_frame)
+scroll_bar = ttk.Scrollbar(msg_frame)
 scroll_bar.grid(row=0, column=1, sticky='nse')
 scroll_bar.configure(command=msg_inp.yview)      # scrollbar will scroll text
 msg_inp.configure(yscrollcommand=scroll_bar.set) # scrollbar will track text vertically
 
-# save button
-# save_btn = tk.Button(root, text='Save')
-# save_btn.grid(sticky=tk.E, ipadx=5, ipady=5) # internal padding
-
-# open button (stack open button under save button)
-# open_btn = tk.Button(root, text='Open')
-# open_btn.grid(sticky=tk.E, ipadx=5, ipady=5)
-# open_btn.configure(command=open_file)
-
 # status bar (last row of view is status bar!)
 status_var = tk.StringVar()
-tk.Label(root, textvariable=status_var).grid(ipadx=5, ipady=5)
-
-# note: 
-# could have done "save_btn = tk.Button(root, text='Save', command=save)" in 
-#   the line above, but this is a way to 'bind' our method seperately.
-# save_btn.configure(command=save) # button event tied/bind to save operation
+ttk.Label(root, textvariable=status_var).grid(row=100, ipadx=5, ipady=5, pady=5, sticky='we')
 
 # add variable traces to force filename check on these variable updates
 subject_var.trace_add('write', check_filename) # required '*args' added to check_filename method
@@ -158,6 +176,8 @@ file_menu.add_command(label='Save', command=save)
 file_menu.add_separator()
 file_menu.add_command(label='Quit', command=root.destroy)
 
+#  add variable trace for 'private' changes
+private_var.trace_add('write', private_warn)
 options_menu = tk.Menu(menu, tearoff=0)
 menu.add_cascade(label='Options', menu=options_menu)
 options_menu.add_checkbutton(label='Private', variable=private_var)
@@ -168,6 +188,11 @@ help_menu.add_command(
     label = 'About',
     command=lambda: tkmb.showinfo('About', 'V1.0 - My time to play with Tkinter')
 )
+
+# save button
+save_btn = ttk.Button(form_frm, text='Save')
+save_btn.grid(sticky=tk.E, ipadx=5, ipady=5) # internal padding
+save_btn.configure(command=save) # button event tied/bind to save operation
 
 # radial buttons to adjust the font size
 font_size = tk.IntVar(value=12)
