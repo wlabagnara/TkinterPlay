@@ -3,7 +3,7 @@
     reference link: https://www.youtube.com/channel/UCj7i-mmOjLV17YTPIrCPkog/videos (Alan D Moore Channel)
 """
 import tkinter as tk
-from unicodedata import category
+# from unicodedata import category
 
 root = tk.Tk()
 
