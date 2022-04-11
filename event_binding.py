@@ -27,6 +27,13 @@ def callback2(event):
     print('callback #2 for event...')
     print(event)
     
+def time_event(event): # event handler for 'custom' event demo
+    timeVar.set(timeVar.get() + 1)
+    print(event) # uses term 'VirtualEvent' when printed
+
+def gen_time_change(): 
+    root.event_generate('<<TimeChanged1>>', when='tail') 
+    pass
 
 ## command binding - uses the 'command' option of widget (not avail for all widgets!)
 ##  callback has no arguments
@@ -56,6 +63,14 @@ btn2.bind('<Return>', callback2, add='+') # adding another handler to existing e
 ## unbinding events
 # <widget>.unbind(event)
 # btn2.unbind('<Return>')
+
+## Roll your own custom events !? --- WORKS!
+root.bind('<<TimeChanged1>>', time_event) # my homemade 'custom' (or virtual?) event 'TimeChanged1'
+ttk.Button(root, text="Click me for time check!", command=gen_time_change).pack() # the button handler will perform the gen event!
+timeVar = tk.IntVar()
+timeVar.set(0)
+tk.Label(root, textvariable=timeVar ).pack()
+# root.unbind('<<TimeChanged1>>') # c/i to see you can 'disable' event!
 
 ## main display loop
 root.mainloop()
