@@ -102,7 +102,7 @@ tk.Checkbutton(root, variable=private_var, text='Private?').grid(ipadx=5, ipady=
 private_var.trace_add('write', private_warn)
 
 # text box (note: no control var option available for this object)
-msg_frame = tk.LabelFrame(root, text='Message')
+msg_frame = tk.LabelFrame(root, text='Message_Here!')
 msg_frame.columnconfigure(0, weight=1)
 msg_inp = tk.Text(msg_frame)
 msg_inp.grid(sticky=tk.N+tk.E+tk.S+tk.W)

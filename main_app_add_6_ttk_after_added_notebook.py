@@ -99,9 +99,9 @@ nb.enable_traversal() # can use arrow keys to switch tabs
 
 # sub-frame for form
 form_frm = ttk.Frame(nb)  # adding this frame to our new notebook
-form_frm.grid(sticky=tk.N+tk.E+tk.W+tk.S, padx=5, pady=5)
-form_frm.columnconfigure(0, weight=1)
-form_frm.rowconfigure(5, weight=1)
+# form_frm.grid(sticky=tk.N+tk.E+tk.W+tk.S, padx=5, pady=5)
+# form_frm.columnconfigure(0, weight=1)
+# form_frm.rowconfigure(5, weight=1)
 nb.add(form_frm, text='Notebook Entry', underline=0) # underline first letter of tab text (ALT+char to switch)
 
 dummy_frm = ttk.Frame(nb)
