@@ -36,42 +36,49 @@ data3 = {'Interest_Rate': [5,5.5,6,5.5,5.25,6.5,7,8,7.5,8.5],
 df3 = DataFrame(data3,columns=['Interest_Rate','Stock_Index_Price'])
 print (df3)
 
-# add charts to the GUI
-
-root = tk.Tk()
-root.geometry("400x200")
 
 # BAR chart
-def draw_bar_chart():    
+def draw_bar_chart(df_in):    
     fig1 = plt.figure(figsize=(6,5), dpi=100)
     ax1 = fig1.add_subplot(111)
-    bar1 = FigureCanvasTkAgg(fig1, root)
-    bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-    df1 = df1[['Country', 'GDP_Per_Capita']].groupby('Country').sum()
+
+    bar1 = FigureCanvasTkAgg(fig1, root)                                # <=== Tkinter hooks!
+    bar1.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)               # <===   Display directly with 'pack()'
+
+    df1 = df_in[['Country','GDP_Per_Capita']].groupby('Country').sum()
     df1.plot(kind='bar', legend=True, ax=ax1)
     ax1.set_title('Country vs GDP per Capita')
 
 # Line chart
-def draw_line_chart():
+def draw_line_chart(df_in):
     figure2 = plt.Figure(figsize=(5,4), dpi=100)
     ax2 = figure2.add_subplot(111)
-    line2 = FigureCanvasTkAgg(figure2, root)
+
+    line2 = FigureCanvasTkAgg(figure2, root)                                     
     line2.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
-    df2 = df2[['Year','Unemployment_Rate']].groupby('Year').sum()
+
+    df2 = df_in[['Year','Unemployment_Rate']].groupby('Year').sum()
     df2.plot(kind='line', legend=True, ax=ax2, color='r',marker='o', fontsize=10)
     ax2.set_title('Year Vs. Unemployment Rate')
 
 # Scatter chart
-def draw_scatter_chart():
+def draw_scatter_chart(df_in):
     figure3 = plt.Figure(figsize=(5,4), dpi=100)
     ax3 = figure3.add_subplot(111)
-    ax3.scatter(df3['Interest_Rate'],df3['Stock_Index_Price'], color = 'g')
+    ax3.scatter(df_in['Interest_Rate'],df_in['Stock_Index_Price'], color = 'g')
+
     scatter3 = FigureCanvasTkAgg(figure3, root) 
     scatter3.get_tk_widget().pack(side=tk.LEFT, fill=tk.BOTH)
+
     ax3.legend(['Stock_Index_Price']) 
     ax3.set_xlabel('Interest Rate')
     ax3.set_title('Interest Rate Vs. Stock Index Price')
 
+def display_charts():
+    # display plots directly on GUI
+    draw_bar_chart(df1)
+    draw_line_chart(df2)
+    draw_scatter_chart(df3)
 
 def draw_histogram():
     # fake data
@@ -82,9 +89,18 @@ def draw_histogram():
     # plt.polar(house_prices ) 
     plt.show()
 
+def display_histogram_via_btn():
+    root.geometry("600x800")
+    # display plot from gui via button click
+    btn1 = tk.Button(root, text="GRAPH RANDOM DATA?", command=draw_histogram)
+    btn1.pack()
 
-btn1 = tk.Button(root, text="GRAPH RANDOM DATA?", command=draw_histogram)
-btn1.pack()
+# add charts to the GUI
+
+root = tk.Tk()
+
+display_charts() # demo 1
+# display_histogram_via_btn() # demo 2
 
 
 root.mainloop()
