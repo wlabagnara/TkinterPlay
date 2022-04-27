@@ -3,7 +3,7 @@
 
     references:
         https://datatofish.com/matplotlib-charts-tkinter-gui/
-        https://matplotlib.org/stable/plot_types/index.html
+        https://matplotlib.org/stable/plot_types/index.html (Overview of many common plotting commands in Matplotlib)
 
 
 """
@@ -94,6 +94,7 @@ def display_histogram_via_btn():
     # display plot from gui via button click
     btn1 = tk.Button(root, text="GRAPH RANDOM DATA?", command=draw_histogram)
     btn1.pack()
+    plt.show()
 
 # add charts to the GUI
 

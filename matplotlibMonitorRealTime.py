@@ -12,6 +12,7 @@
 
 import random
 from itertools import count
+from numpy import block
 import pandas as pd
 from matplotlib import pyplot as plt # Using 'py plots' object here, but there is also a very useful 'subplot'
 # import matplotlib.pyplot as plt # (same as above line) 
@@ -41,14 +42,7 @@ def plot2():
         x_vals.append(next(index))
         y_vals.append(random.randint(0,5))
         plt.cla() # clear axis to avoid plotting over itself (eg. - see changing colors!)
-        plt.plot(x_vals, y_vals)
-
-    def animate_with_csv_sim(i):
-        x_vals.append(next(index))
-        y_vals.append(random.randint(0,5))
-        plt.cla() # clear axis to avoid plotting over itself (eg. - see changing colors!)
-        plt.plot(x_vals, y_vals)
-    
+        plt.plot(x_vals, y_vals)    
 
     ani = FuncAnimation(plt.gcf(), animate, interval=1000) # gcf = 'get current figure'; func to call; interval (in ms)
     plt.tight_layout()
@@ -62,10 +56,10 @@ def plot3():
 	"""
     from matplotlib.animation import FuncAnimation
 
-    x_vals = []
-    y_vals = []
+    # x_vals = []
+    # y_vals = []
 
-    index = count()
+    # index = count()
 
     def animate_with_csv(i):
         data = pd.read_csv('data.csv')
